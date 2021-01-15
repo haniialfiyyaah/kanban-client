@@ -22,7 +22,7 @@
 import axios from 'axios';
 
 export default {
-  props: ['server'],
+  props: ['server','toastMsg'],
   data() {
     return {
       user: {
@@ -52,6 +52,9 @@ export default {
       })
       .catch(err => {
         console.log();
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
       })
     }
   }

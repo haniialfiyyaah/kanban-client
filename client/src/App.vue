@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Login v-if="!isLogin" :onLoginSuccess="onLoginSuccess" :server="server"></Login>
+    <Login v-if="!isLogin" :onLoginSuccess="onLoginSuccess" :server="server" :toastMsg="toastMsg"></Login>
     <Home v-if="isLogin" :onLogout="onLogout" :server="server" :toastMsg="toastMsg" :confirmDialog="confirmDialog"></Home>
   </div>
 </template>
@@ -22,7 +22,6 @@ export default {
       isLogin: false,
       server: 'https://protected-sierra-94699.herokuapp.com'
       // server: 'http://localhost:3000'
-      
     };
   },
   methods: {
@@ -44,24 +43,6 @@ export default {
           this.isLogin = false
           this.alertMsg('Logout', 'You are logged out', 'success')
         })
-    },
-    showAddCategory() {
-    //   const { value: ipAddress } = await Swal.fire({
-    //   title: 'Enter your IP address',
-    //   input: 'text',
-    //   inputLabel: 'Your IP address',
-    //   inputValue: inputValue,
-    //   showCancelButton: true,
-    //   inputValidator: (value) => {
-    //     if (!value) {
-    //       return 'You need to write something!'
-    //     }
-    //   }
-    // })
-
-    // if (ipAddress) {
-    //   Swal.fire(`Your IP address is ${ipAddress}`)
-    // }
     },
 
     // Alert

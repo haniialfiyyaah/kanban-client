@@ -4,7 +4,7 @@
     <button class="btn btn-primary" @click="goTo('login')">LOGIN</button>
     <button class="btn btn-success" @click="goTo('register')">REGISTER</button>
     <LoginForm :server="server" class="mt-3" v-if="formPage === 'login'" @login="login"></LoginForm>
-    <RegisterForm :server="server" class="mt-3" v-if="formPage === 'register'" @onRegisterSuccess="onRegisterSuccess"></RegisterForm>
+    <RegisterForm :server="server" class="mt-3" v-if="formPage === 'register'" :toastMsg="toastMsg" @onRegisterSuccess="onRegisterSuccess"></RegisterForm>
     <span>-- or --</span>
     <LoginGoogle :server="server" :onLoginSuccess="onLoginSuccess" :isLogin="true"></LoginGoogle>
   </div>
@@ -17,7 +17,7 @@ import RegisterForm from "../components/Forms/RegisterForm";
 import LoginGoogle from "../components/Forms/LoginGoogle";
 
 export default {
-  props: ['server', 'onLoginSuccess'],
+  props: ['server', 'onLoginSuccess', 'toastMsg'],
   components: {
     LoginGoogle,
     LoginForm,
@@ -48,6 +48,9 @@ export default {
       })
       .catch(err => {
         console.log(err);
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
       })
     }
   }

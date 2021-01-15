@@ -63,7 +63,9 @@ export default {
         this.tasks = response.data
       })
       .catch((err) => {
-        console.log(err.response.data);
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
       })
     },
     refreshTasks() {
