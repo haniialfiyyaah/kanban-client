@@ -17,9 +17,12 @@
         <b-form-select
           id="category"
           v-model="data.CategoryId"
-          :options="categoryName"
+          :options="categories"
+          value-field="id"
+          text-field="name"
           required
         ></b-form-select>
+        <!-- <b-form-select-option v-for="category in categories" :key="category.id" value="category.id">category.name</b-form-select-option> -->
       </b-form-group>
     </form>
   </b-modal>
