@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-center">
         <!-- KANBAN -->
     </div>
-    <TaskUpdate :task="task" :categories="categories" :server="server" :refreshTasks="refreshTasks"></TaskUpdate>
+    <TaskUpdate :task="task" :categories="categories" :server="server" :refreshTasks="refreshTasks" :toastMsg="toastMsg"></TaskUpdate>
 
     <div class="lists d-flex">
       <TaskBoard
@@ -14,7 +14,9 @@
         :tasks="tasks"
         :server="server"
         :refreshTasks='refreshTasks'
-        @updateClick="getDataTask">
+        @updateClick="getDataTask"
+        :toastMsg="toastMsg"
+        :confirmDialog="confirmDialog">
       </TaskBoard>
       <div class="text-white">@</div>
     </div>
@@ -27,7 +29,7 @@ import TaskBoard from "./Boards/TaskBoard";
 import TaskUpdate from "./Boards/TaskUpdate";
 
 export default {
-  props: ['server'],
+  props: ['server', 'toastMsg', 'confirmDialog'],
   components: {
     TaskBoard,
     TaskUpdate
@@ -39,8 +41,7 @@ export default {
         { id: 1, name: 'Backlog' },
         { id: 2, name: 'Todo' },
         { id: 3, name: 'Doing' },
-        { id: 4, name: 'Done' },
-        { id: 5, name: 'Test' },
+        { id: 4, name: 'Done' }
       ],
       openModal: false,
       task: {}
@@ -62,7 +63,7 @@ export default {
         this.tasks = response.data
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data);
       })
     },
     refreshTasks() {

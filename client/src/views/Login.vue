@@ -6,7 +6,7 @@
     <LoginForm :server="server" class="mt-3" v-if="formPage === 'login'" @login="login"></LoginForm>
     <RegisterForm :server="server" class="mt-3" v-if="formPage === 'register'" @onRegisterSuccess="onRegisterSuccess"></RegisterForm>
     <span>-- or --</span>
-    <LoginGoogle :server="server" :onLoginSuccess="onLoginSuccess"></LoginGoogle>
+    <LoginGoogle :server="server" :onLoginSuccess="onLoginSuccess" :isLogin="true"></LoginGoogle>
   </div>
 </template>
 

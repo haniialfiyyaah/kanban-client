@@ -5,14 +5,23 @@
         <img src="https://mustopa28121992.github.io/projectt/img/fox--md5--a9e377ae39495073d0e66db163fc8d9b.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
       </a>
       <strong> Kanban Board </strong>
-      <button class="btn btn-warning btn-sm" @click="logout" >Logout</button>
+      <div class="d-flex">
+        <!-- <button class="btn btn-success btn-sm mr-3" >Add Category</button> -->
+        <button class="btn btn-warning btn-sm" @click="logout" >Logout</button>
+        <!-- <LoginGoogle @click="logout" :isLogin="false"></LoginGoogle> -->
+      </div>
     </div>
   </nav>
 </template>
 
 <script>
+import LoginGoogle from './Forms/LoginGoogle'
+
 export default {
-  props: ['logout']
+  props: ['logout'],
+  components: {
+    LoginGoogle
+  }
 }
 </script>
 

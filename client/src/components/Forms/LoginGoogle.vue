@@ -1,5 +1,9 @@
 <template>
-  <GoogleLogin :params="params" :renderParams="renderParams" :onSuccess="onSignIn" :onFailure="onFailure">Login</GoogleLogin>
+  <div>
+    <GoogleLogin v-if="isLogin" :params="params" :renderParams="renderParams" :onSuccess="onSignIn" :onFailure="onFailure">Login</GoogleLogin>
+    <GoogleLogin v-if="!isLogin" class="btn btn-sm bg-danger text-white" :params="params" :logoutButton=true>Logout</GoogleLogin>  
+  </div>
+  
 </template>
 
 <script>
@@ -7,7 +11,7 @@ import axios from 'axios'
 import GoogleLogin from 'vue-google-login'
 
 export default {
-  props: ['server', 'onLoginSuccess'],
+  props: ['server', 'onLoginSuccess', 'isLogin'],
   components: {
     GoogleLogin
   },

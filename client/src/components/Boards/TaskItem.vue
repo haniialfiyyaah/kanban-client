@@ -14,25 +14,34 @@
 import axios from 'axios'
 
 export default {
-  props: ['id', 'task', 'server', 'refreshTasks'],
+  props: ['id', 'task', 'server', 'refreshTasks', 'confirmDialog', 'toastMsg'],
   methods: {
     updateClick() {
       this.$emit('updateClick', this.task)
     },
     deleteTask() {
-      axios({
-        method: 'DELETE',
-        url: this.server+'/tasks/'+this.task.id,
-        headers : {
-            access_token: localStorage.access_token
+      this.confirmDialog('Are you sure you wanna delete it?', 'This will be delete permanently', 'question', 'Yes, delete it!')
+      .then(result => {
+        if (result.isConfirmed) {
+          axios({
+            method: 'DELETE',
+            url: this.server+'/tasks/'+this.task.id,
+            headers : {
+                access_token: localStorage.access_token
+            }
+          })
+          .then(({ data }) => {
+            console.log(data);
+            this.refreshTasks()
+            this.toastMsg('success', data.message)
+          })
+          .catch((err) => {
+            err.response.data.message.forEach(el => {
+              this.toastMsg('error', el)
+            });
+            console.log(err.response.data.message);
+          })
         }
-      })
-      .then(({ data }) => {
-        console.log(data);
-        this.refreshTasks()
-      })
-      .catch((err) => {
-        console.log(err.response.data.message);
       })
     }
   }

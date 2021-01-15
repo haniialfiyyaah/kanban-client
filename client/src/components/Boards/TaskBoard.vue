@@ -7,18 +7,20 @@
         </strong>
       </div>
       <div :id="id" class="task-list pr-1 h-100">
-        <draggable v-model="filterTasks" group="tasks" :sort="false" :move="checkMove" @end="onEnd" @start="drag=true" >
+        <draggable :list="filtered" group="tasks" :sort="false" :move="checkMove" @end="drag=false" @start="drag=true" >
           <TaskItem
-            v-for="task in filterTasks"
+            v-for="task in filtered"
             :key="task.id"
             :id="task.id"
             :task="task"
             :server="server"
             :refreshTasks="refreshTasks"
-            @updateClick="updateClick">
+            @updateClick="updateClick"
+            :toastMsg="toastMsg"
+            :confirmDialog="confirmDialog">
           </TaskItem>
         </draggable>
-        <TaskCreate v-if="isInput" :closeInput="closeInput" :server="server" :category="category" :refreshTasks=refreshTasks></TaskCreate>
+        <TaskCreate v-if="isInput" :toastMsg="toastMsg" :closeInput="closeInput" :server="server" :category="category" :refreshTasks=refreshTasks></TaskCreate>
       </div>
       <button class="btn d-flex m-1 " v-if="!isInput" @click="openInput">
         + Add New Task
@@ -34,7 +36,7 @@ import TaskCreate from "./TaskCreate";
 import axios from 'axios'
 
 export default {
-  props: ['id', 'category', 'tasks', 'server', 'refreshTasks'],
+  props: ['id', 'category', 'tasks', 'server', 'refreshTasks', 'toastMsg', 'confirmDialog'],
   components: {
     TaskItem,
     TaskCreate,
@@ -42,7 +44,7 @@ export default {
   },
   data() {
     return {
-      isForbiden: false,
+      isForbiden: true,
       isInput: false,
       moveTaskId: 0,
       targetCategory: '',
@@ -77,55 +79,28 @@ export default {
       })
       .then(({ data }) => {
         this.refreshTasks()
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-    },
-
-    // Check if data not forbidden
-    getOneTask(id) {
-      console.log('called!');
-      axios({
-        method: 'GET',
-        url: this.server+'/tasks/'+id,
-        headers : { access_token: localStorage.access_token }
-      })
-      .then((response) => {
         this.isForbiden = true
+        this.toastMsg('success','tasks moved')
       })
       .catch((err) => {
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
         this.isForbiden = false
       })
     },
 
     // stop or continue drag
     checkMove(evt) {
-      const id = evt.draggedContext.element.id
-      this.getOneTask(id)
-      return this.isForbiden
-    },
-
-    // when card is drop!
-    onEnd(e) {
-      e.drop = false
-      this.moveTaskId = +e.item.id
-      this.targetCategory = e.to.parentElement.id
+      this.moveTaskId = evt.draggedContext.element.id
+      this.targetCategory = evt.to.parentElement.id
       this.changeCategory()
+      return this.isForbiden
     }
   },
   computed: {
     filtered() {
       return this.tasks.filter(task => task.category.toLowerCase() === this.category.name.toLowerCase())
-    },
-    filterTasks: {
-        get() {
-          return !this.categoryTasks ? this.filtered : this.categoryTasks
-        },
-        set(value) {
-          this.categoryTasks = value
-          this.isForbiden = false
-        }
     }
   }
 }

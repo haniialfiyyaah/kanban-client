@@ -14,7 +14,7 @@
 import axios from 'axios'
 
 export default {
-  props: ['closeInput', 'server', 'category', 'refreshTasks'],
+  props: ['closeInput', 'server', 'category', 'refreshTasks', 'toastMsg'],
   data() {
     return {
       task : {
@@ -39,9 +39,12 @@ export default {
         this.refreshTasks()
         this.task.title = ''
         this.closeInput()
+        this.toastMsg('success', 'Task added')
       })
       .catch((err) => {
-        console.log(err);
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
       })
     }
   },

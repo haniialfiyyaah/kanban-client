@@ -29,7 +29,7 @@
 import axios from 'axios'
 
 export default {
-  props: ['task', 'server', 'refreshTasks', 'categories'],
+  props: ['task', 'server', 'refreshTasks', 'categories', 'toastMsg'],
   data() {
     return {
       data: {
@@ -65,9 +65,12 @@ export default {
       .then(({ data }) => {
         console.log(data);
         this.refreshTasks()
+        this.toastMsg('success', 'Task Updated')
       })
       .catch((err) => {
-        console.log(err);
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
       })
     }
   },
