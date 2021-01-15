@@ -3,42 +3,53 @@
     <br>
     <button class="btn btn-primary" @click="goTo('login')">LOGIN</button>
     <button class="btn btn-success" @click="goTo('register')">REGISTER</button>
-    <LoginForm :server="server" class="mt-3" v-if="formPage === 'login'" v-on:onLoginSuccess="onLoginSuccess"></LoginForm>
-    <RegisterForm :server="server" class="mt-3" v-if="formPage === 'register'" v-on:onRegisterSuccess="onRegisterSuccess"></RegisterForm>
+    <LoginForm :server="server" class="mt-3" v-if="formPage === 'login'" @login="login"></LoginForm>
+    <RegisterForm :server="server" class="mt-3" v-if="formPage === 'register'" @onRegisterSuccess="onRegisterSuccess"></RegisterForm>
+    <span>-- or --</span>
+    <LoginGoogle :server="server" :onLoginSuccess="onLoginSuccess"></LoginGoogle>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import LoginForm from "../components/Forms/LoginForm";
 import RegisterForm from "../components/Forms/RegisterForm";
+import LoginGoogle from "../components/Forms/LoginGoogle";
 
 export default {
-  props: ['server'],
+  props: ['server', 'onLoginSuccess'],
   components: {
+    LoginGoogle,
     LoginForm,
     RegisterForm
   },
   data() {
     return {
-      formPage: 'login',
-      // isLogin: false
+      formPage: 'login'
     };
   },
   methods: {
     goTo(page) {
       this.formPage = page
     },
-    onLoginSuccess() {
-      // this.isLogin = val
-      this.$emit('onLoginSuccess')
+    onRegisterSuccess(user) {
+      console.log('Register Success! Loging in.');
+      this.login(user)
     },
-    onRegisterSuccess() {
-      console.log('Register Success! Please Login.');
-      this.goTo('login')
+    login(user) {
+      axios({
+        method: 'POST',
+        url: this.server+'/login',
+        data : user
+      })
+      .then(({ data }) => {
+        localStorage.access_token = data.access_token
+        this.onLoginSuccess()
+      })
+      .catch(err => {
+        console.log(err);
+      })
     }
-  },
-  created() {
-    
   }
 }
 </script>

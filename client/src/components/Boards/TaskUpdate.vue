@@ -2,7 +2,7 @@
   <b-modal
     id="taskUpdate"
     ref="modal"
-    title="Update Task"
+    title="Detail Task"
     okTitle="Edit"
     hide
     @show="resetModal"
@@ -11,7 +11,15 @@
   >
     <form ref="form" @submit.prevent="updateTask">
       <b-form-group label="Name" label-for="name-input" invalid-feedback="Name is required">
-        <b-form-textarea id="name-textarea" v-model="data.title" required></b-form-textarea>
+        <b-form-input id="name-textarea" v-model="data.title" class="" required></b-form-input>
+      </b-form-group>
+      <b-form-group id="input-group-3" label="Category:" label-for="input-3">
+        <b-form-select
+          id="category"
+          v-model="data.category"
+          :options="categoryName"
+          required
+        ></b-form-select>
       </b-form-group>
     </form>
   </b-modal>
@@ -21,7 +29,7 @@
 import axios from 'axios'
 
 export default {
-  props: ['task', 'server'],
+  props: ['task', 'server', 'refreshTasks', 'categories'],
   data() {
     return {
       data: {
@@ -54,17 +62,19 @@ export default {
           category: this.data.category
         }
       })
-      .then((response) => {
-        console.log(response.data);
-        this.$emit('updateTasks')
+      .then(({ data }) => {
+        console.log(data);
+        this.refreshTasks()
       })
       .catch((err) => {
         console.log(err);
       })
     }
   },
-  created() {
-    console.log('Modal Created');
+  computed: {
+    categoryName() {
+      return this.categories.map(el => el.name)
+    }
   }
 }
 </script>

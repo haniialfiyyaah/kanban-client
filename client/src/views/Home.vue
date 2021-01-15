@@ -1,29 +1,19 @@
 <template>
-<!-- justify-content-center align-items-stretch -->
   <div>
-    <!-- navbar min height max height 40px -->
-    <!-- <button @click="logout">LOGOUT</button> -->
-    <Navbar :server="server" v-on:logout='logout'></Navbar> 
+    <Navbar :server="server" :logout='onLogout'></Navbar> 
     <BoardList :server="server"></BoardList>
-
   </div>
 </template>
 
 <script>
 import Navbar from "../components/Navbar";
-import BoardList from "./BoardList";
+import BoardList from "../components/BoardList";
 
 export default {
-  props: ['server'],
+  props: ['server', 'onLogout'],
   components: {
     Navbar,
     BoardList
-  },
-  methods: {
-    logout() {
-      localStorage.clear()
-      this.$emit('onLogout')
-    }
   }
 }
 </script>

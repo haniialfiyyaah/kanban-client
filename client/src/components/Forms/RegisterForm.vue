@@ -43,16 +43,15 @@ export default {
           password: this.user.password
         }
       })
-      .then(response => {
-        console.log(response.data);
-        // localStorage.access_token = response.data.access_token
-        this.$emit('onRegisterSuccess')
-        this.user.name = ''
-        this.user.email = ''
-        this.user.password = ''
+      .then(({ data }) => {
+        console.log(data);
+        this.$emit('onRegisterSuccess', {
+          email: this.user.email,
+          password: this.user.password
+        })
       })
       .catch(err => {
-        console.log(err.response.data.message);
+        console.log();
       })
     }
   }

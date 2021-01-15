@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Login v-if="!isLogin" v-on:onLoginSuccess="onLoginSuccess" :server="server"></Login>
-    <Home v-if="isLogin" v-on:onLogout="onLogout" :server="server"></Home>
+    <Login v-if="!isLogin" :onLoginSuccess="onLoginSuccess" :server="server"></Login>
+    <Home v-if="isLogin" :onLogout="onLogout" :server="server"></Home>
   </div>
 </template>
 
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      message: 'Hello world',
+      message: 'Welcome To Kanban',
       isLogin: false,
       server: 'http://localhost:3000'
     };
@@ -29,6 +29,13 @@ export default {
     },
     onLogout() {
       console.log('Logged Out');
+      localStorage.clear()
+      if (gapi.auth2) {
+        const auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log('User signed out.');
+        });
+      }
       this.isLogin = false
     }
   },

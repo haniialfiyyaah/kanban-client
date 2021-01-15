@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 export default {
   props: ['server'],
   data() {
@@ -28,24 +28,7 @@ export default {
   },
   methods: {
     login() {
-      axios({
-        method: 'POST',
-        url: this.server+'/login',
-        data : {
-            email: this.user.email,
-            password: this.user.password
-        }
-      })
-      .then(response => {
-        console.log(response.data);
-        localStorage.access_token = response.data.access_token
-        this.$emit('onLoginSuccess', true)
-        this.user.email = ''
-        this.user.password = ''
-      })
-      .catch(err => {
-        console.log(err.response.data.message);
-      })
+      this.$emit('login', this.user)
     }
   }
 }

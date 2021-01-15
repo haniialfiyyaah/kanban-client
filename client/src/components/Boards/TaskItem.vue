@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-white shadow-sm mb-2" style="overflow:hidden;">
+  <div :id="id" class="card bg-white shadow-sm mb-2">
     <div class="card-body p-2 d-flex flex-column">
       {{ task.title }}
       <div class="align-self-end">
@@ -14,7 +14,7 @@
 import axios from 'axios'
 
 export default {
-  props: ['task', 'server'],
+  props: ['id', 'task', 'server', 'refreshTasks'],
   methods: {
     updateClick() {
       this.$emit('updateClick', this.task)
@@ -27,12 +27,12 @@ export default {
             access_token: localStorage.access_token
         }
       })
-      .then((response) => {
-        console.log(response.data);
-        this.$emit('updateTasks')
+      .then(({ data }) => {
+        console.log(data);
+        this.refreshTasks()
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data.message);
       })
     }
   }
@@ -40,5 +40,8 @@ export default {
 </script>
 
 <style>
-
+ .card {
+   overflow:hidden;
+   cursor: move;
+ }
 </style>
