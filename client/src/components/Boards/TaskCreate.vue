@@ -19,7 +19,7 @@ export default {
     return {
       task : {
         title: '',
-        category: this.category.name
+        CategoryId: this.category.id
       }
     }
   },
@@ -31,7 +31,7 @@ export default {
         headers : { access_token: localStorage.access_token },
         data: {
           title: this.task.title,
-          category: this.task.category
+          CategoryId: this.task.CategoryId
         }
       })
       .then(({ data }) => {

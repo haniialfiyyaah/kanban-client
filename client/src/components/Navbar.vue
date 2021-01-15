@@ -6,7 +6,6 @@
       </a>
       <strong> Kanban Board </strong>
       <div class="d-flex">
-        <!-- <button class="btn btn-success btn-sm mr-3" >Add Category</button> -->
         <button class="btn btn-warning btn-sm" @click="logout" >Logout</button>
         <!-- <LoginGoogle @click="logout" :isLogin="false"></LoginGoogle> -->
       </div>

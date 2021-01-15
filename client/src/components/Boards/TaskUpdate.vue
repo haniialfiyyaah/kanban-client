@@ -16,7 +16,7 @@
       <b-form-group id="input-group-3" label="Category:" label-for="input-3">
         <b-form-select
           id="category"
-          v-model="data.category"
+          v-model="data.CategoryId"
           :options="categoryName"
           required
         ></b-form-select>
@@ -35,16 +35,17 @@ export default {
       data: {
         id: this.task.id,
         title: this.task.title,
-        category: this.task.category,
+        CategoryId: this.task.CategoryId,
         UserId: this.task.UserId
-      }
+      },
+      category: ''
     }
   },
   methods: {
     resetModal() {
       this.data.id = this.task.id
       this.data.title = this.task.title
-      this.data.category = this.task.category
+      this.data.CategoryId = this.task.CategoryId
       this.data.UserId = this.task.UserId
     },
     handleOk() {
@@ -59,7 +60,7 @@ export default {
         },
         data: {
           title: this.data.title,
-          category: this.data.category
+          CategoryId: this.data.CategoryId
         }
       })
       .then(({ data }) => {
@@ -72,11 +73,28 @@ export default {
           this.toastMsg('error', el)
         });
       })
+    },
+    getCategory() {
+      axios({
+        method: 'GET',
+        url: this.server+'/categories/'+this.task.CategoryId,
+        headers : {
+            access_token: localStorage.access_token
+        }
+      })
+      .then(({ data }) => {
+        this.category = data
+      })
+      .catch((err) => {
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
+      })
     }
   },
   computed: {
     categoryName() {
-      return this.categories.map(el => el.name)
+      return this.categories.map(el => el.id)
     }
   }
 }

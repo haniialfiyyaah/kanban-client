@@ -1,10 +1,26 @@
 <template>
   <div :id="id" class="task-board m-2 pb-4">
     <div class="task-board-content rounder-lg d-flex flex-column p-2">
-      <div class="d-flex m-1">
+      <!-- CATEGORY UPDATE -->
+      <form action="" @submit.prevent="updateCategory">
+        <div class="d-flex flex-column align-items-center m-1" v-if="isUpdate">
+            <input ref="name" v-model="category.name" class="mb-2 p-2 pb-4 w-100" placeholder="Enter Category Name">
+            <div class="align-self-end">
+              <button type="submit" class="btn btn-sm btn-success" @click="updateCategory">UPDATE</button>
+              <button class="btn btn-sm btn-secondary" @click="closeUpdate">CANCEL</button>
+            </div>
+          <hr>
+        </div>
+      </form>
+      <!-- CATEGORY NAME -->
+      <div class="d-flex justify-content-between align-items-center m-1"  v-if="!isUpdate">
         <strong class="h6">
           {{ category.name }}
         </strong>
+        <div>
+          <button class="btn btn-sm btn-outline-secondary" @click="openUpdate">U</button>
+          <button class="btn btn-sm btn-outline-danger" @click="deleteCategory">D</button>
+        </div>
       </div>
       <div :id="id" class="task-list pr-1 h-100">
         <draggable :list="filtered" group="tasks" :sort="false" :move="checkMove" @end="drag=false" @start="drag=true" >
@@ -36,7 +52,7 @@ import TaskCreate from "./TaskCreate";
 import axios from 'axios'
 
 export default {
-  props: ['id', 'category', 'tasks', 'server', 'refreshTasks', 'toastMsg', 'confirmDialog'],
+  props: ['id', 'category', 'tasks', 'server', 'refreshTasks', 'toastMsg', 'confirmDialog', 'refreshCategories'],
   components: {
     TaskItem,
     TaskCreate,
@@ -46,6 +62,7 @@ export default {
     return {
       isForbiden: true,
       isInput: false,
+      isUpdate: false,
       moveTaskId: 0,
       targetCategory: '',
       categoryTasks: this.filtered
@@ -63,6 +80,63 @@ export default {
     closeInput() {
       this.isInput = false
     },
+    openUpdate() {
+      this.isUpdate = true
+    },
+    closeUpdate() {
+      this.isUpdate = false
+    },
+
+    deleteCategory() {
+      this.confirmDialog('Are you sure you wanna delete it?', 'Tasks inside this category will also deleted!', 'question', 'Yes, delete it!')
+      .then(result => {
+        if (result.isConfirmed) {
+          axios({
+            method: 'DELETE',
+            url: this.server+'/categories/'+this.category.id,
+            headers : {
+                access_token: localStorage.access_token
+            }
+          })
+          .then(({ data }) => {
+            console.log(data);
+            this.refreshCategories()
+            this.toastMsg('success', data.message)
+          })
+          .catch((err) => {
+            err.response.data.message.forEach(el => {
+              this.toastMsg('error', el)
+            });
+            console.log(err.response.data.message);
+          })
+        }
+      })
+    },
+
+    updateCategory() {
+      axios({
+        method: 'PUT',
+        url: this.server+'/categories/'+this.category.id,
+        headers : {
+            access_token: localStorage.access_token
+        },
+        data: {
+          name: this.category.name
+        }
+      })
+      .then(({ data }) => {
+        console.log(data);
+        this.refreshCategories()
+        this.closeUpdate()
+        this.toastMsg('success', 'Category Updated')
+      })
+      .catch((err) => {
+        err.response.data.message.forEach(el => {
+          this.toastMsg('error', el)
+        });
+        console.log(err.response.data.message);
+      })
+    },
     
     // Open modal update
     updateClick(val) {
@@ -75,7 +149,7 @@ export default {
         method: 'PATCH',
         url: this.server+'/tasks/'+this.moveTaskId,
         headers : { access_token: localStorage.access_token },
-        data: { category: this.targetCategory }
+        data: { CategoryId: this.targetCategory }
       })
       .then(({ data }) => {
         this.refreshTasks()
@@ -97,10 +171,11 @@ export default {
       this.changeCategory()
       return this.isForbiden
     }
+
   },
   computed: {
     filtered() {
-      return this.tasks.filter(task => task.category.toLowerCase() === this.category.name.toLowerCase())
+      return this.tasks.filter(task => task.CategoryId === this.category.id)
     }
   }
 }
